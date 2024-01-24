@@ -29,4 +29,3 @@ jobs:
         with:
           workdir: cdk
           aws-role: ${{ secrets.AWS_ROLE }}
-        env:
