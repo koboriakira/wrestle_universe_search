@@ -5,7 +5,6 @@ name = "pypi"
 
 [packages]
 requests = "*"
-gazpacho = "*"
 
 [dev-packages]
 python-lambda-local = "*"
