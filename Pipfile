@@ -8,6 +8,7 @@ requests = "*"
 gazpacho = "*"
 
 [dev-packages]
+python-lambda-local = "*"
 
 [requires]
 python_version = "3.11"
