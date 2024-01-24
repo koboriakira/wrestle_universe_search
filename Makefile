@@ -1,6 +1,6 @@
 cdk-test:
 	cd cdk && npm run test
 
-.PHONY: test-scraping
-test-scraping:
-	@python-lambda-local -f handler -t 900 src/handlers/scraping.py ./.events/scraping_sample.json
+.PHONY: pull-episode
+pull-episode:
+	@cd src && python-lambda-local -f handler -t 900 pull_episode.py ../.events/pull_episode.json
