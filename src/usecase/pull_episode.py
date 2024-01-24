@@ -4,14 +4,16 @@ from typing import Optional
 from usecase.service.episode_fetcher import EpisodeFetcher
 from usecase.service.episode_translator import EpisodeTranslator
 from util.custom_logging import get_logger
+from domain.infrastructure.json_repository import JsonRepository
 
 logger = get_logger(__name__)
 DEFAULT_DIR = "data"
 
 class PullEpisodesUsecase:
     """ 興行データを収集して保存するユースケース """
-    def __init__(self) -> None:
+    def __init__(self, repository: JsonRepository) -> None:
         self._episode_fetcher = EpisodeFetcher()
+        self._repository = repository
 
     def handle(self, next_page_token: Optional[str] = None, stop_episode_id: Optional[str] = None, dir: str = DEFAULT_DIR) -> None:
         """WRESTLE UNIVERSEより試合情報を取得する
@@ -32,30 +34,11 @@ class PullEpisodesUsecase:
         logger.info("translate episodes")
         episodes, casts, video_chapters = EpisodeTranslator.translate(fetched_episodes)
 
-        # 必要に応じて初期化
-        self._init_if_needed(dir)
+        self._repository.save_episodes(episodes)
+        self._repository.save_casts(casts)
+        self._repository.save_video_chapters(video_chapters)
 
-        # すでに存在するjsonファイルに追記する
-        with open(f"{dir}/episodes.json", "r") as f:
-            episodes += json.load(f)
-            # episode_idで重複を削除する
-            episodes = list({e["id"]:e for e in episodes}.values())
-        with open(f"{dir}/episodes.json", "w") as f:
-            json.dump(episodes, f, ensure_ascii=False, indent=2)
 
-        with open(f"{dir}/casts.json", "r") as f:
-            casts += json.load(f)
-            # cast_idで重複を削除する
-            casts = list({c["id"]:c for c in casts}.values())
-        with open(f"{dir}/casts.json", "w") as f:
-            json.dump(casts, f, ensure_ascii=False, indent=2)
-
-        with open(f"{dir}/video_chapters.json", "r") as f:
-            video_chapters += json.load(f)
-            # video_chapter_idで重複を削除する
-            video_chapters = list({v["id"]:v for v in video_chapters}.values())
-        with open(f"{dir}/video_chapters.json", "w") as f:
-            json.dump(video_chapters, f, ensure_ascii=False, indent=2)
 
     def _init_if_needed(self, dir: str) -> None:
         """
