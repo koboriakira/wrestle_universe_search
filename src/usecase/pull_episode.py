@@ -15,7 +15,7 @@ class PullEpisodesUsecase:
         self._episode_fetcher = EpisodeFetcher()
         self._repository = repository
 
-    def handle(self, next_page_token: Optional[str] = None, stop_episode_id: Optional[str] = None, dir: str = DEFAULT_DIR) -> str:
+    def handle(self, next_page_token: Optional[str] = None, stop_episode_id: Optional[str] = None, dir: str = DEFAULT_DIR, count: int = 1) -> str:
         """WRESTLE UNIVERSEより試合情報を取得する
 
         Args:
@@ -28,7 +28,7 @@ class PullEpisodesUsecase:
         logger.info("get episodes from WRESTLE UNIVERSE")
         fetched_episodes, fetched_next_page_token = self._episode_fetcher.handle(next_page_token=next_page_token,
                                                         stop_episode_id=stop_episode_id,
-                                                        count=5)
+                                                        count=count)
         logger.info("fetched_next_page_token: %s", fetched_next_page_token)
         print("fetched_next_page_token: %s", fetched_next_page_token)
         logger.info("translate episodes")
