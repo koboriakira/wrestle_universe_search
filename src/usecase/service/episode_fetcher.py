@@ -12,7 +12,7 @@ class EpisodeFetcher:
     BASE_URL = 'https://api.wrestle-universe.com/v1/videoEpisodes?al=ja&labels=-tjpw&pageSize=20'
 
 
-    def handle(self, stop_episode_id: Optional[str] = None, count: int = 5) -> list[dict]:
+    def handle(self, next_page_token: Optional[str] = None, stop_episode_id: Optional[str] = None, count: int = 5) -> tuple[list[dict], Optional[str]]:
         """WRESTLE UNIVERSEより試合情報を取得する
 
         Args:
@@ -22,11 +22,11 @@ class EpisodeFetcher:
         Returns:
             EpisodeFetchResponse:
         """
-        next_page_token = ""
-        count = 0
+        next_page_token = "" if next_page_token is None else next_page_token
+        request_count = 0
         episodes: list[dict] = []
-        while next_page_token is not None and count < 5:
-            count += 1
+        while next_page_token is not None and request_count < count:
+            request_count += 1
             time.sleep(1)
             res = self._get(next_page_token)
             # episodesにres[0]を追加する
@@ -36,7 +36,7 @@ class EpisodeFetcher:
             # stop_episode_idが含まれていたら取得を終了する
             if stop_episode_id in [e["id"] for e in episodes]:
                 break
-        return episodes
+        return episodes, next_page_token
 
     def _get(self, next_page_token: Optional[str] = None) -> tuple[list[dict], Optional[str]]:
         params = {}
@@ -53,4 +53,4 @@ if __name__ == "__main__":
     fetcher = EpisodeFetcher()
     # fetcher._get(EpisodeFetcher.BASE_URL)
     # fetcher.handle(stop_episode_id="sDueqz5UupTXsBsb84V2Ek")
-    fetcher.handle()
+    fetcher.handle(next_page_token=None)
