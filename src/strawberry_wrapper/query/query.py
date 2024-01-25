@@ -5,12 +5,12 @@ from util.custom_logging import get_logger
 from strawberry_wrapper.type import Cast, VideoChapter
 from strawberry_wrapper.query.query_casts import QueryCasts
 from strawberry_wrapper.query.query_video_chapters import QueryVideoChapters
-from infrastructure.json_repository.json_local_repository import JsonLocalRepository
+from infrastructure.json_repository.json_s3_repository import JsonS3Repository
 
 
 logger = get_logger(__name__)
 
-json_repository = JsonLocalRepository()
+json_repository = JsonS3Repository()
 query_casts = QueryCasts(json_repository=json_repository)
 query_video_chapters = QueryVideoChapters(json_repository=json_repository)
 

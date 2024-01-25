@@ -16,7 +16,7 @@ CASTS_JSON = "casts.json"
 VIDEO_CHAPTERS_JSON = "video_chapters.json"
 EVENTS_JSON = "events.json"
 
-class JsonLocalRepository(JsonRepository):
+class JsonS3Repository(JsonRepository):
     def __init__(self) -> None:
         self.s3_client = boto3.client('s3')
 
