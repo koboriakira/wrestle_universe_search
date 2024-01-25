@@ -27,7 +27,7 @@ class EpisodeFetcher:
         episodes: list[dict] = []
         while next_page_token is not None and request_count < count:
             request_count += 1
-            time.sleep(1)
+            time.sleep(3)
             res = self._get(next_page_token)
             # episodesにres[0]を追加する
             episodes += res[0]
