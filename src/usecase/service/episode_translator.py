@@ -1,4 +1,5 @@
 from typing import Optional
+import json
 from util.custom_logging import get_logger
 
 logger = get_logger(__name__)
@@ -15,8 +16,9 @@ class EpisodeTranslator:
                 display_name = e["displayName"]
                 description = e["description"]
                 key_visual_url = e["keyVisualUrl"]
-                links = e["links"]
-                url = links["other"] if "other" in links else links[0] if len(links) > 0 else None
+                links = e["links"] if "links" in e and e["links"] else []
+                # リンクが存在しないこともあるらしい。その場合はidから正しいと思われるURLを生成する
+                url = links["other"] if "other" in links else links[0] if len(links) > 0 else f"https://www.wrestle-universe.com/ja/videos/{id}"
                 if "attributeLabels" in e:
                     attribute_labels = e["attributeLabels"]
                     group = attribute_labels["group"] if "group" in attribute_labels else None
@@ -45,8 +47,8 @@ class EpisodeTranslator:
                 all_episodes.append(episode)
             except Exception as err:
                 logger.error(err)
-                logger.error(e)
-                raise e
+                logger.error(json.dumps(e, ensure_ascii=False))
+                raise err
         return all_episodes, all_casts, all_video_chapters
 
 
