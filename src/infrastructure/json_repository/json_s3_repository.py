@@ -2,6 +2,7 @@ import boto3
 from botocore.exceptions import NoCredentialsError
 import json
 from datetime import date as Date
+import requests
 from typing import Optional
 from domain.infrastructure.json_repository import JsonRepository
 from util.custom_logging import get_logger
@@ -9,6 +10,7 @@ from util.custom_logging import get_logger
 logger = get_logger(__name__)
 
 BUCKET_NAME = "wrestler-universe-search-koboriakira"
+CLOUDFRONT_URL = "https://d1q8qzq1j7j7x5.cloudfront.net"
 
 DIR = "/tmp/"
 EPISODE_JSON = "episodes.json"
@@ -17,6 +19,11 @@ VIDEO_CHAPTERS_JSON = "video_chapters.json"
 EVENTS_JSON = "events.json"
 
 class JsonS3Repository(JsonRepository):
+    """
+    S3を利用したJsonRepository
+    書き込みは直接S3に保存するが、読み込みはCloudFront経由でS3にアクセスする
+    """
+
     def __init__(self) -> None:
         self.s3_client = boto3.client('s3')
 
@@ -77,7 +84,13 @@ class JsonS3Repository(JsonRepository):
             raise e
 
     def _load(self, file_name: str) -> list[dict]:
-        filepath = f"{DIR}/{file_name}"
-        self.s3_client.download_file(BUCKET_NAME, file_name, filepath)
+        # CloudFrontからファイルをダウンロードして/tmpに保存
+        filepath = f"/tmp/{file_name}"
+        url = f"{CLOUDFRONT_URL}/{file_name}"
+
+        response = requests.get(url)
+        with open(filepath, "wb") as f:
+            f.write(response.content)
+
         with open(filepath, "r") as f:
             return json.load(f)
