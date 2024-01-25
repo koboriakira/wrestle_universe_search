@@ -3,7 +3,7 @@
 version: "3.0"
 
 services:
-  api:
+  graphql-api:
     container_name: "wrestle-universe-search"
     volumes:
       - ./:/workspace:cached

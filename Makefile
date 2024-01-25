@@ -8,3 +8,7 @@ pull-episode:
 dev:
 	docker compose up -d
 	open http://localhost:10125/docs
+
+graphql-test:
+	docker compose up -d
+	open http://localhost:10125/graphql
