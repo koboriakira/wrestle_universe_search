@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from typing import Optional
 
 class JsonRepository(metaclass=ABCMeta):
     @abstractmethod
@@ -14,7 +15,7 @@ class JsonRepository(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def load_casts(self) -> list[dict]:
+    def load_casts(self, sub_display_name: Optional[str] = None) -> list[dict]:
         pass
 
     @abstractmethod

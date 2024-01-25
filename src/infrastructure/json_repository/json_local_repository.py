@@ -1,5 +1,6 @@
 import pathlib
 import json
+from typing import Optional
 from domain.infrastructure.json_repository import JsonRepository
 
 DEFAULT_DIR = "data"
@@ -19,9 +20,11 @@ class JsonLocalRepository(JsonRepository):
     def save_casts(self, data: list[dict]) -> None:
         self._save(data, CASTS_JSON)
 
-    def load_casts(self) -> list[dict]:
-        with open(f"{DEFAULT_DIR}/{CASTS_JSON}", "r") as f:
-            return json.load(f)
+    def load_casts(self, sub_display_name: Optional[str] = None) -> list[dict]:
+        casts_json_data = self._load(CASTS_JSON)
+        if sub_display_name:
+            casts_json_data = [cast for cast in casts_json_data if cast["subDisplayName"] == sub_display_name]
+        return casts_json_data
 
     def save_video_chapters(self, data: list[dict]) -> None:
         self._save(data, VIDEO_CHAPTERS_JSON)
@@ -48,3 +51,7 @@ class JsonLocalRepository(JsonRepository):
             original_data = list({e["id"]:e for e in original_data}.values())
         with open(f"{dir}/{file_name}", "w") as f:
             json.dump(original_data, f, ensure_ascii=False, indent=2)
+
+    def _load(self, file_name: str) -> list[dict]:
+        with open(f"{DEFAULT_DIR}/{file_name}", "r") as f:
+            return json.load(f)
