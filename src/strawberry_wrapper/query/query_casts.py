@@ -1,14 +1,21 @@
 from util.custom_logging import get_logger
 from strawberry_wrapper.type.cast import Cast
+from domain.infrastructure.json_repository import JsonRepository
 
 logger = get_logger(__name__)
 
-def query_casts(self) -> list[Cast]:
-    return [Cast(
-        id="rHVr7dqNHLmM4XsmMrs9HZ",
-        display_name="難波小百合",
-        kana_name="なんばさゆり",
-        sub_display_name="SAYURI NAMBA",
-        key_visual_url="https://image.asset.wrestle-universe.com/et2H6cfTiw5t3qD5x4VXuJ/et2H6cfTiw5t3qD5x4VXuJ",
-        profile_image_url="https://image.asset.wrestle-universe.com/7pvyDQGWXkcP1haxSANiPW/7pvyDQGWXkcP1haxSANiPW"
-    )]
+class QueryCasts:
+    def __init__(self, json_repository: JsonRepository):
+        self.json_repository = json_repository
+
+    def query(self) -> list[Cast]:
+        casts_json_data = self.json_repository.load_casts()
+        casts = [Cast(
+            id=cast["id"],
+            display_name=cast["displayName"],
+            kana_name=cast["kanaName"],
+            sub_display_name=cast["subDisplayName"],
+            key_visual_url=cast["keyVisualUrl"],
+            profile_image_url=cast["profileImageUrl"],
+        ) for cast in casts_json_data]
+        return casts
