@@ -8,7 +8,7 @@ DEFAULT_DIR = "data"
 EPISODE_JSON = "episodes.json"
 CASTS_JSON = "casts.json"
 VIDEO_CHAPTERS_JSON = "video_chapters.json"
-
+EVENTS_JSON = "events.json"
 
 class JsonLocalRepository(JsonRepository):
     def save_episodes(self, data: list[dict]) -> None:
@@ -33,11 +33,16 @@ class JsonLocalRepository(JsonRepository):
     def load_video_chapters(self, start: Optional[Date] = None, end: Optional[Date] = None) -> list[dict]:
         video_chapters_json_data = self._load(VIDEO_CHAPTERS_JSON)
         if start:
-            video_chapters_json_data = [video_chapter for video_chapter in video_chapters_json_data if video_chapter["matchDate"] >= start]
+            video_chapters_json_data = [video_chapter for video_chapter in video_chapters_json_data if Date.fromisoformat(video_chapter["matchDate"]) >= start]
         if end:
-            video_chapters_json_data = [video_chapter for video_chapter in video_chapters_json_data if video_chapter["matchDate"] <= end]
+            video_chapters_json_data = [video_chapter for video_chapter in video_chapters_json_data if Date.fromisoformat(video_chapter["matchDate"]) <= end]
         return video_chapters_json_data
 
+    def save_events(self, data: list[dict]) -> None:
+        self._save(data, EVENTS_JSON)
+
+    def load_events(self) -> list[dict]:
+        return self._load(EVENTS_JSON)
 
     def _save(self, data: list[dict], file_name: str) -> None:
         # ディレクトリが存在しなければ作成する

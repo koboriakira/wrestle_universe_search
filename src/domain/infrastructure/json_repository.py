@@ -25,3 +25,11 @@ class JsonRepository(metaclass=ABCMeta):
     @abstractmethod
     def load_video_chapters(self, start: Optional[Date] = None, end: Optional[Date] = None) -> list[dict]:
         pass
+
+    @abstractmethod
+    def save_events(self, data: list[dict]) -> None:
+        pass
+
+    @abstractmethod
+    def load_events(self) -> list[dict]:
+        pass
