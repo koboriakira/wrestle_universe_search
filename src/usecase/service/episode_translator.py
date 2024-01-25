@@ -11,6 +11,7 @@ class EpisodeTranslator:
             display_name = e["displayName"]
             description = e["description"]
             key_visual_url = e["keyVisualUrl"]
+            url = e["links"]["other"]
             if "attributeLabels" in e:
                 attribute_labels = e["attributeLabels"]
                 group = attribute_labels["group"] if "group" in attribute_labels else None
@@ -34,6 +35,7 @@ class EpisodeTranslator:
                 "venue": venue,
                 "casts": cast_id_list,
                 "videoChapters": video_chapter_id_list,
+                "url": url,
             }
             all_episodes.append(episode)
         return all_episodes, all_casts, all_video_chapters
