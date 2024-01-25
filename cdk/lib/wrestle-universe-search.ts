@@ -31,7 +31,17 @@ export class WrestleUniverseSearch extends Stack {
     const role = this.makeRole(bucket.bucketArn);
     const myLayer = this.makeLayer();
 
-    // lazy_main
+    // Lambda: graphql API
+    const graphql = this.createLambdaFunction(
+      "Graphql",
+      role,
+      myLayer,
+      "graphql_app.handler",
+      30,
+      true
+    );
+
+    // Lambda: pull_episode
     const pullEpisode = this.createLambdaFunction(
       "PullEpisode",
       role,
