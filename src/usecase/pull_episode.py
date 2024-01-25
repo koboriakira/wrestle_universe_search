@@ -30,17 +30,17 @@ class PullEpisodesUsecase:
         """
         logger.info("get events from WRESTLE UNIVERSE")
         fetched_events, event_next_page_token = self._event_fetcher.handle()
-        events = EventTranslator.translate(fetched_events)
 
         logger.info("get episodes from WRESTLE UNIVERSE")
         fetched_episodes, fetched_next_page_token = self._episode_fetcher.handle(next_page_token=next_page_token,
                                                         stop_episode_id=stop_episode_id,
                                                         count=count)
-        logger.info("fetched_next_page_token: %s", fetched_next_page_token)
-        print("fetched_next_page_token: %s", fetched_next_page_token)
-        logger.info("translate episodes")
+
+        logger.info("translate events and episodes")
+        events = EventTranslator.translate(fetched_events)
         episodes, casts, video_chapters = EpisodeTranslator.translate(fetched_episodes)
 
+        logger.info("save events and episodes")
         self._repository.save_events(events)
         self._repository.save_episodes(episodes)
         self._repository.save_casts(casts)

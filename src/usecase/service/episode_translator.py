@@ -6,11 +6,11 @@ logger = get_logger(__name__)
 class EpisodeTranslator:
     @classmethod
     def translate(cls, episodes: list[dict]) -> tuple[list[dict], list[dict], list[dict]]:
-        try:
-            all_episodes: list[dict] = []
-            all_casts:list[dict] = []
-            all_video_chapters:list[dict] = []
-            for e in episodes:
+        all_episodes: list[dict] = []
+        all_casts:list[dict] = []
+        all_video_chapters:list[dict] = []
+        for e in episodes:
+            try:
                 id = e["id"]
                 display_name = e["displayName"]
                 description = e["description"]
@@ -43,11 +43,11 @@ class EpisodeTranslator:
                     "url": url,
                 }
                 all_episodes.append(episode)
-            return all_episodes, all_casts, all_video_chapters
-        except Exception as e:
-            logger.error(e)
-            logger.error(episodes)
-            raise e
+            except Exception as err:
+                logger.error(err)
+                logger.error(e)
+                raise e
+        return all_episodes, all_casts, all_video_chapters
 
 
     @classmethod
