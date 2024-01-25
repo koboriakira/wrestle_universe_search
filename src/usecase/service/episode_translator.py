@@ -51,6 +51,7 @@ class EpisodeTranslator:
         filtered_casts = [c for c in casts if c["id"] not in prev_cast_id_list]
         for cast in filtered_casts:
             id = cast["id"]
+            type = cast["type"]
             display_name = cast["displayName"]
             key_visual_url = cast["keyVisualUrl"]
             kana_name = cast["kanaName"]
@@ -59,6 +60,7 @@ class EpisodeTranslator:
             # prev_casts_listにマージする
             prev_casts_list.append({
                 "id": id,
+                "type": type,
                 "displayName": display_name,
                 "keyVisualUrl": key_visual_url,
                 "kanaName": kana_name,
