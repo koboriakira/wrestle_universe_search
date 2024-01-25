@@ -13,19 +13,22 @@ class JsonLocalRepository(JsonRepository):
         self._save(data, EPISODE_JSON)
 
     def load_episodes(self) -> list[dict]:
-        pass
+        with open(f"{DEFAULT_DIR}/{EPISODE_JSON}", "r") as f:
+            return json.load(f)
 
     def save_casts(self, data: list[dict]) -> None:
         self._save(data, CASTS_JSON)
 
     def load_casts(self) -> list[dict]:
-        pass
+        with open(f"{DEFAULT_DIR}/{CASTS_JSON}", "r") as f:
+            return json.load(f)
 
     def save_video_chapters(self, data: list[dict]) -> None:
         self._save(data, VIDEO_CHAPTERS_JSON)
 
     def load_video_chapters(self) -> list[dict]:
-        pass
+        with open(f"{DEFAULT_DIR}/{VIDEO_CHAPTERS_JSON}", "r") as f:
+            return json.load(f)
 
     def _save(self, data: list[dict], file_name: str) -> None:
         # ディレクトリが存在しなければ作成する
