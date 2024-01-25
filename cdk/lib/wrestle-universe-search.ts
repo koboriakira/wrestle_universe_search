@@ -5,11 +5,14 @@ import {
   StackProps,
   Duration,
   RemovalPolicy,
+  CfnOutput
   aws_lambda as lambda,
   aws_iam as iam,
   aws_events as events,
   aws_events_targets as targets,
   aws_s3 as s3,
+  aws_cloudfront as cloudfront,
+  aws_cloudfront_origins as origins,
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
 
@@ -26,6 +29,16 @@ export class WrestleUniverseSearch extends Stack {
     const bucket = new s3.Bucket(this, "WrestlerUniverseSearchBucket", {
       bucketName: "wrestler-universe-search-koboriakira",
       removalPolicy: RemovalPolicy.DESTROY,
+    });
+
+    // CloudFrontディストリビューションの作成
+    const distribution = new cloudfront.Distribution(this, "WrestlerUniverseSearchDistribution", {
+      defaultBehavior: { origin: new origins.S3Origin(bucket) },
+    });
+
+    // CloudFrontディストリビューションのURLを出力
+    new CfnOutput(this, "WrestlerUniverseSearchDistributionDistributionURL", {
+      value: distribution.distributionDomainName,
     });
 
     const role = this.makeRole(bucket.bucketArn);
