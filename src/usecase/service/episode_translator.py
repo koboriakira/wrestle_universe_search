@@ -11,7 +11,8 @@ class EpisodeTranslator:
             display_name = e["displayName"]
             description = e["description"]
             key_visual_url = e["keyVisualUrl"]
-            url = e["links"]["other"]
+            links = e["links"]
+            url = links["other"] if "other" in links else links[0] if len(links) > 0 else None
             if "attributeLabels" in e:
                 attribute_labels = e["attributeLabels"]
                 group = attribute_labels["group"] if "group" in attribute_labels else None
