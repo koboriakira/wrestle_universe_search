@@ -15,6 +15,8 @@ class EpisodeTranslator:
                 attribute_labels = e["attributeLabels"]
                 group = attribute_labels["group"] if "group" in attribute_labels else None
                 match_date = attribute_labels["matchDate"] if "matchDate" in attribute_labels else None
+                # 最初の10文字を取得して、YYYY-MM-DD形式にする
+                match_date = match_date[:10] if match_date is not None else None
                 venue = attribute_labels["venue"] if "venue" in attribute_labels else None
             casts = e["casts"] if "casts" in e and e["casts"] else []
             cast_id_list = [c["id"] for c in casts]
