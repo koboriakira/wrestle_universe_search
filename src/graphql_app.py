@@ -1,5 +1,6 @@
 from mangum import Mangum
 from fastapi import FastAPI
+from strawberry_wrapper.main import generate_graphql_app
 from util.custom_logging import get_logger
 
 logger = get_logger(__name__)
@@ -11,14 +12,8 @@ app = FastAPI(
     version="0.0.1",
 )
 
-@app.get("/graphql")
-def graphql():
-    request_data: dict = json.loads(request.data.decode('utf-8'))
-    logger.debug("graphql")
-    logger.info("graphql")
-    return {
-        'status': 'ok',
-    }
+graphql_app = generate_graphql_app()
+app.add_route("/graphql", graphql_app)
 
 @app.get("/healthcheck")
 def healthcheck():
