@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from typing import Optional
-
+from datetime import date as Date
 class JsonRepository(metaclass=ABCMeta):
     @abstractmethod
     def save_episodes(self, data: list[dict]) -> None:
@@ -23,5 +23,5 @@ class JsonRepository(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def load_video_chapters(self) -> list[dict]:
+    def load_video_chapters(self, start: Optional[Date] = None, end: Optional[Date] = None) -> list[dict]:
         pass

@@ -1,5 +1,6 @@
 import pathlib
 import json
+from datetime import date as Date
 from typing import Optional
 from domain.infrastructure.json_repository import JsonRepository
 
@@ -29,9 +30,14 @@ class JsonLocalRepository(JsonRepository):
     def save_video_chapters(self, data: list[dict]) -> None:
         self._save(data, VIDEO_CHAPTERS_JSON)
 
-    def load_video_chapters(self) -> list[dict]:
-        with open(f"{DEFAULT_DIR}/{VIDEO_CHAPTERS_JSON}", "r") as f:
-            return json.load(f)
+    def load_video_chapters(self, start: Optional[Date] = None, end: Optional[Date] = None) -> list[dict]:
+        video_chapters_json_data = self._load(VIDEO_CHAPTERS_JSON)
+        if start:
+            video_chapters_json_data = [video_chapter for video_chapter in video_chapters_json_data if video_chapter["matchDate"] >= start]
+        if end:
+            video_chapters_json_data = [video_chapter for video_chapter in video_chapters_json_data if video_chapter["matchDate"] <= end]
+        return video_chapters_json_data
+
 
     def _save(self, data: list[dict], file_name: str) -> None:
         # ディレクトリが存在しなければ作成する
