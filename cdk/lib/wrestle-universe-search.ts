@@ -5,7 +5,7 @@ import {
   StackProps,
   Duration,
   RemovalPolicy,
-  CfnOutput
+  CfnOutput,
   aws_lambda as lambda,
   aws_iam as iam,
   aws_events as events,
@@ -32,9 +32,13 @@ export class WrestleUniverseSearch extends Stack {
     });
 
     // CloudFrontディストリビューションの作成
-    const distribution = new cloudfront.Distribution(this, "WrestlerUniverseSearchDistribution", {
-      defaultBehavior: { origin: new origins.S3Origin(bucket) },
-    });
+    const distribution = new cloudfront.Distribution(
+      this,
+      "WrestlerUniverseSearchDistribution",
+      {
+        defaultBehavior: { origin: new origins.S3Origin(bucket) },
+      }
+    );
 
     // CloudFrontディストリビューションのURLを出力
     new CfnOutput(this, "WrestlerUniverseSearchDistributionDistributionURL", {
