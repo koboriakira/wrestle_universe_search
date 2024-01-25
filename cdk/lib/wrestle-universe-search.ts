@@ -4,10 +4,12 @@ import {
   Stack,
   StackProps,
   Duration,
+  RemovalPolicy,
   aws_lambda as lambda,
   aws_iam as iam,
   aws_events as events,
   aws_events_targets as targets,
+  aws_s3 as s3,
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
 
@@ -20,7 +22,13 @@ export class WrestleUniverseSearch extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    const role = this.makeRole();
+    // S3バケットを作成
+    const bucket = new s3.Bucket(this, "WrestlerUniverseSearchBucket", {
+      bucketName: "wrestler-universe-search-koboriakira",
+      removalPolicy: RemovalPolicy.DESTROY,
+    });
+
+    const role = this.makeRole(bucket.bucketArn);
     const myLayer = this.makeLayer();
 
     // lazy_main
@@ -38,24 +46,30 @@ export class WrestleUniverseSearch extends Stack {
    * Create or retrieve an IAM role for the Lambda function.
    * @returns {iam.Role} The created or retrieved IAM role.
    */
-  makeRole() {
-    // Lambdaの実行ロールを取得または新規作成
+  makeRole(bucketArn: string) {
+    // Lambda の実行ロールを作成
     const role = new iam.Role(this, "LambdaRole", {
       assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
     });
 
-    // Lambda の実行ロールに管理ポリシーを追加
+    // 管理ポリシーを追加
     role.addManagedPolicy(
       iam.ManagedPolicy.fromAwsManagedPolicyName(
         "service-role/AWSLambdaBasicExecutionRole"
       )
     );
 
-    // 必要に応じて追加の権限をポリシーとしてロールに付与
+    // ユーザポリシーを追加
     role.addToPrincipalPolicy(
       new iam.PolicyStatement({
         actions: ["lambda:InvokeFunction", "lambda:InvokeAsync"],
         resources: ["*"],
+      })
+    );
+    role.addToPrincipalPolicy(
+      new iam.PolicyStatement({
+        actions: ["s3:*"],
+        resources: [bucketArn + "/*"],
       })
     );
 
