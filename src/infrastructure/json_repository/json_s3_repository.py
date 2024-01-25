@@ -10,7 +10,7 @@ from util.custom_logging import get_logger
 logger = get_logger(__name__)
 
 BUCKET_NAME = "wrestler-universe-search-koboriakira"
-CLOUDFRONT_URL = "https://d1q8qzq1j7j7x5.cloudfront.net"
+CLOUDFRONT_URL = "https://d2qzikqzlpvk9x.cloudfront.net"
 
 DIR = "/tmp/"
 EPISODE_JSON = "episodes.json"
@@ -94,3 +94,8 @@ class JsonS3Repository(JsonRepository):
 
         with open(filepath, "r") as f:
             return json.load(f)
+
+if __name__ == "__main__":
+    # python -m infrastructure.json_repository.json_s3_repository
+    repository = JsonS3Repository()
+    print(repository.load_events())
