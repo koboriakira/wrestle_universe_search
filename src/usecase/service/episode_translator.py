@@ -1,45 +1,53 @@
 from typing import Optional
+from util.custom_logging import get_logger
+
+logger = get_logger(__name__)
 
 class EpisodeTranslator:
     @classmethod
     def translate(cls, episodes: list[dict]) -> tuple[list[dict], list[dict], list[dict]]:
-        all_episodes: list[dict] = []
-        all_casts:list[dict] = []
-        all_video_chapters:list[dict] = []
-        for e in episodes:
-            id = e["id"]
-            display_name = e["displayName"]
-            description = e["description"]
-            key_visual_url = e["keyVisualUrl"]
-            links = e["links"]
-            url = links["other"] if "other" in links else links[0] if len(links) > 0 else None
-            if "attributeLabels" in e:
-                attribute_labels = e["attributeLabels"]
-                group = attribute_labels["group"] if "group" in attribute_labels else None
-                match_date = attribute_labels["matchDate"] if "matchDate" in attribute_labels else None
-                # 最初の10文字を取得して、YYYY-MM-DD形式にする
-                match_date = match_date[:10] if match_date is not None else None
-                venue = attribute_labels["venue"] if "venue" in attribute_labels else None
-            casts = e["casts"] if "casts" in e and e["casts"] else []
-            cast_id_list = [c["id"] for c in casts]
-            all_casts = cls.translate_casts(casts, all_casts)
-            video_chapters = cls.translate_video_chapters(video_chapters=e["videoChapters"], episode_id=id, match_date=match_date) if "videoChapters" in e else []
-            all_video_chapters += video_chapters
-            video_chapter_id_list = [c["id"] for c in video_chapters]
-            episode = {
-                "id": id,
-                "displayName": display_name,
-                "description": description,
-                "keyVisualUrl": key_visual_url,
-                "group": group,
-                "matchDate": match_date,
-                "venue": venue,
-                "casts": cast_id_list,
-                "videoChapters": video_chapter_id_list,
-                "url": url,
-            }
-            all_episodes.append(episode)
-        return all_episodes, all_casts, all_video_chapters
+        try:
+            all_episodes: list[dict] = []
+            all_casts:list[dict] = []
+            all_video_chapters:list[dict] = []
+            for e in episodes:
+                id = e["id"]
+                display_name = e["displayName"]
+                description = e["description"]
+                key_visual_url = e["keyVisualUrl"]
+                links = e["links"]
+                url = links["other"] if "other" in links else links[0] if len(links) > 0 else None
+                if "attributeLabels" in e:
+                    attribute_labels = e["attributeLabels"]
+                    group = attribute_labels["group"] if "group" in attribute_labels else None
+                    match_date = attribute_labels["matchDate"] if "matchDate" in attribute_labels else None
+                    # 最初の10文字を取得して、YYYY-MM-DD形式にする
+                    match_date = match_date[:10] if match_date is not None else None
+                    venue = attribute_labels["venue"] if "venue" in attribute_labels else None
+                casts = e["casts"] if "casts" in e and e["casts"] else []
+                cast_id_list = [c["id"] for c in casts]
+                all_casts = cls.translate_casts(casts, all_casts)
+                video_chapters = cls.translate_video_chapters(video_chapters=e["videoChapters"], episode_id=id, match_date=match_date) if "videoChapters" in e else []
+                all_video_chapters += video_chapters
+                video_chapter_id_list = [c["id"] for c in video_chapters]
+                episode = {
+                    "id": id,
+                    "displayName": display_name,
+                    "description": description,
+                    "keyVisualUrl": key_visual_url,
+                    "group": group,
+                    "matchDate": match_date,
+                    "venue": venue,
+                    "casts": cast_id_list,
+                    "videoChapters": video_chapter_id_list,
+                    "url": url,
+                }
+                all_episodes.append(episode)
+            return all_episodes, all_casts, all_video_chapters
+        except Exception as e:
+            logger.error(e)
+            logger.error(episodes)
+            raise e
 
 
     @classmethod
